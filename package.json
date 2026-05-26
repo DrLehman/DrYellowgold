@@ -1,0 +1,95 @@
+{
+  "name": "dryellowgold",
+  "version": "1.0.0",
+  "description": "Electron desktop app for Jason Howell and Yellowgold Studios shows",
+  "main": "dist/main/main/main.js",
+  "scripts": {
+    "dev": "npm run dev:vite",
+    "dev:vite": "vite",
+    "dev:desktop": "concurrently \"npm run dev:vite\" \"npm run dev:main\" \"npm run dev:electron\"",
+    "dev:main": "tsc -p tsconfig.main.json --watch --preserveWatchOutput",
+    "dev:electron": "wait-on http://localhost:5173 dist/main/main/main.js dist/main/preload/preload.js && electron .",
+    "build": "tsc && vite build",
+    "build:electron": "tsc -p tsconfig.main.json",
+    "package": "npm run build && npm run build:electron && electron-builder",
+    "package:mac": "npm run build && npm run build:electron && electron-builder --mac",
+    "package:mac:dmg": "npm run build && npm run build:electron && electron-builder --mac dmg",
+    "package:mac:arm64": "npm run build && npm run build:electron && electron-builder --mac --arm64",
+    "package:mac:x64": "npm run build && npm run build:electron && electron-builder --mac --x64",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.main.json --noEmit"
+  },
+  "keywords": ["electron", "yellowgold", "jason-howell", "podcast", "react"],
+  "author": "NewCoffee7477",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rss-parser": "^3.13.0"
+  },
+  "build": {
+    "appId": "com.dryellowgold.app",
+    "productName": "DrYellowgold",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.entertainment",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "build/icon.icns",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 400
+      }
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
